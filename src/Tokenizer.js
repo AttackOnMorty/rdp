@@ -1,9 +1,29 @@
 const Spec = [
+    // -----------------------------------
+    // Spaces:
+    [null, /^\s/],
+
+    // -----------------------------------
+    // Comments:
+
+    // Single-line comments
+    [null, /^\/\/.*/],
+
+    // Multi-line comments
+    // TODO: why lazy match
+    [null, /^\/\*[\s\S]*?\*\//],
+
+    // -----------------------------------
     // Numbers:
     ['NUMBER', /^\d+/],
 
+    // -----------------------------------
     // Strings:
+
+    // Double-quoted strings
     ['STRING', /^"[^"]*"/],
+
+    // Single-quoted strings
     ['STRING', /^'[^']*'/],
 ];
 
@@ -31,8 +51,14 @@ class Tokenizer {
         for (const [tokenType, regexp] of Spec) {
             const tokenValue = this._match(regexp, string);
 
+            // Can't match this rule, continue
             if (tokenValue === null) {
                 continue;
+            }
+
+            // Should skip token, e.g. whitespace
+            if (tokenType === null) {
+                return this.getNextToken();
             }
 
             return {
