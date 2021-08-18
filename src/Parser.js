@@ -16,21 +16,68 @@ class Parser {
 
     /**
      * Program
-     *  : NumericLiteral
-     *  ;
+     *   : StatementList
+     *   ;
      */
     Program() {
         return {
             type: 'Program',
-            body: this.Literal(),
+            body: this.StatementList(),
         };
     }
 
     /**
+     * StatementList
+     *   : Statement
+     *   | StatementList Statement -> Statement Statement Statement Statement
+     *   ;
+     */
+    StatementList() {
+        const statementList = [this.Statement()];
+        while (this._lookahead !== null) {
+            statementList.push(this.Statement());
+        }
+        return statementList;
+    }
+
+    /**
+     * Statement
+     *   : ExpressionStatement
+     *   ;
+     */
+    Statement() {
+        return this.ExpressionStatement();
+    }
+
+    /**
+     * ExpressionStatement
+     *   : Expression ';'
+     *   ;
+     */
+    ExpressionStatement() {
+        const expression = this.Expression();
+        // Every expression must end with ';'
+        this._eat(';');
+        return {
+            type: 'ExpressionStatement',
+            expression,
+        };
+    }
+
+    /**
+     * Expression
+     *   : Literal
+     *   ;
+     */
+    Expression() {
+        return this.Literal();
+    }
+
+    /**
      * Literal
-     *  : NumericLiteral
-     *  | StringLiteral
-     *  ;
+     *   : NumericLiteral
+     *   | StringLiteral
+     *   ;
      */
     Literal() {
         switch (this._lookahead.type) {
@@ -45,8 +92,8 @@ class Parser {
 
     /**
      * NumericLiteral
-     *  : NUMBER
-     *  ;
+     *   : NUMBER
+     *   ;
      */
     NumericLiteral() {
         const token = this._eat('NUMBER');
@@ -58,8 +105,8 @@ class Parser {
 
     /**
      * StringLiteral
-     *  : STRING
-     *  ;
+     *   : STRING
+     *   ;
      */
     StringLiteral() {
         const token = this._eat('STRING');
