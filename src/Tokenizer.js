@@ -42,6 +42,7 @@ class Tokenizer {
     }
 
     hasMoreTokens() {
+        // this._cursor points to the current unhandled character. So the max value will be this._string.length - 1
         return this._cursor < this._string.length;
     }
 

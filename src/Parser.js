@@ -9,7 +9,7 @@ class Parser {
     parse(string) {
         this._string = string;
         this._tokenizer.init(string);
-        this._lookahead = this._tokenizer.getNextToken();
+        this._currentToken = this._tokenizer.getNextToken();
 
         return this.Program();
     }
@@ -34,7 +34,7 @@ class Parser {
      */
     StatementList() {
         const statementList = [this.Statement()];
-        while (this._lookahead !== null) {
+        while (this._currentToken !== null) {
             statementList.push(this.Statement());
         }
         return statementList;
@@ -80,7 +80,7 @@ class Parser {
      *   ;
      */
     Literal() {
-        switch (this._lookahead.type) {
+        switch (this._currentToken.type) {
             case 'NUMBER':
                 return this.NumericLiteral();
             case 'STRING':
@@ -117,7 +117,7 @@ class Parser {
     }
 
     _eat(tokenType) {
-        const token = this._lookahead;
+        const token = this._currentToken;
 
         if (token === null) {
             throw new SyntaxError(
@@ -131,7 +131,7 @@ class Parser {
             );
         }
 
-        this._lookahead = this._tokenizer.getNextToken();
+        this._currentToken = this._tokenizer.getNextToken();
 
         return token;
     }
