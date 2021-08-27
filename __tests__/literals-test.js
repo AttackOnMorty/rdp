@@ -1,6 +1,6 @@
 module.exports = (test) => {
     // NumericLiteral
-    test('42', {
+    test('42;', {
         type: 'Program',
         body: [
             {
