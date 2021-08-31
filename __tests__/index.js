@@ -9,6 +9,26 @@ const tests = [
 
 const parser = new Parser();
 
+/**
+ * For manual tests.
+ */
+function exec() {
+    const program = `
+
+    {
+
+    }
+
+`;
+
+    const ast = parser.parse(program);
+
+    console.log(JSON.stringify(ast, null, 2));
+}
+
+// Manual test:
+exec();
+
 const test = (program, expected) => {
     const ast = parser.parse(program);
     assert.deepEqual(ast, expected);
