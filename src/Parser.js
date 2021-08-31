@@ -47,15 +47,30 @@ class Parser {
      * Statement
      *   : ExpressionStatement
      *   | BlockStatement
+     *   | EmptyStatement
      *   ;
      */
     Statement() {
         switch (this._currentToken.type) {
+            case ';':
+                return this.EmptyStatement();
             case '{':
                 return this.BlockStatement();
             default:
                 return this.ExpressionStatement();
         }
+    }
+
+    /**
+     * EmptyStatement
+     *   : ';'
+     *   ;
+     */
+    EmptyStatement() {
+        this._eat(';');
+        return {
+            type: 'EmptyStatement',
+        };
     }
 
     /**

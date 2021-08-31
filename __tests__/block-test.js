@@ -1,7 +1,8 @@
 module.exports = (test) => {
+    // Normal block:
     test(
         `
-        
+
     {
       42;
 
@@ -37,7 +38,6 @@ module.exports = (test) => {
     );
 
     // Empty block:
-
     test(
         `
 
@@ -58,7 +58,6 @@ module.exports = (test) => {
     );
 
     // Nested blocks:
-
     test(
         `
 
