@@ -32,9 +32,12 @@ class Parser {
      *   | StatementList Statement -> Statement Statement Statement Statement
      *   ;
      */
-    StatementList() {
+    StatementList(stopLookahead = null) {
         const statementList = [this.Statement()];
-        while (this._currentToken !== null) {
+        while (
+            this._currentToken !== null &&
+            this._currentToken.type !== stopLookahead
+        ) {
             statementList.push(this.Statement());
         }
         return statementList;
@@ -43,10 +46,35 @@ class Parser {
     /**
      * Statement
      *   : ExpressionStatement
+     *   | BlockStatement
      *   ;
      */
     Statement() {
-        return this.ExpressionStatement();
+        switch (this._currentToken.type) {
+            case '{':
+                return this.BlockStatement();
+            default:
+                return this.ExpressionStatement();
+        }
+    }
+
+    /**
+     * BlockStatement
+     *   : '{' OptStatementList '}'
+     *   ;
+     */
+    BlockStatement() {
+        this._eat('{');
+
+        const body =
+            this._currentToken.type !== '}' ? this.StatementList('}') : [];
+
+        this._eat('}');
+
+        return {
+            type: 'BlockStatement',
+            body,
+        };
     }
 
     /**
