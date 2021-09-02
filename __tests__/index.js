@@ -5,6 +5,7 @@ const tests = [
     require('./statement-list-test'),
     require('./block-test'),
     require('./empty-statement-test'),
+    require('./math-test'),
 ];
 
 const parser = new Parser();
@@ -13,13 +14,7 @@ const parser = new Parser();
  * For manual tests.
  */
 function exec() {
-    const program = `
-
-    {
-
-    }
-
-`;
+    const program = `2 + 3 - 2;`;
 
     const ast = parser.parse(program);
 
