@@ -29,7 +29,7 @@ class Parser {
     /**
      * StatementList
      *   : Statement
-     *   | StatementList Statement -> Statement Statement Statement Statement
+     *   | StatementList Statement
      *   ;
      */
     StatementList(stopLookahead = null) {
@@ -119,38 +119,38 @@ class Parser {
     /**
      * AdditiveExpression
      *   : MultiplicativeExpression
-     *   | AdditiveExpression ADDITIVE_OPERATOR MultiplicativeExpression -> AdditiveExpression ADDITIVE_OPERATOR AdditiveExpression ADDITIVE_OPERATOR MultiplicativeExpression
+     *   | AdditiveExpression ADDITIVE_OPERATOR MultiplicativeExpression
      *   ;
      */
     AdditiveExpression() {
-        let left = this.MultiplicativeExpression();
-
-        while (this._currentToken.type === 'ADDITIVE_OPERATOR') {
-            const operator = this._eat('ADDITIVE_OPERATOR').value;
-            const right = this.MultiplicativeExpression();
-            left = {
-                type: 'BinaryExpression',
-                operator,
-                left,
-                right,
-            };
-        }
-
-        return left;
+        return this._BinaryExpression(
+            'MultiplicativeExpression',
+            'ADDITIVE_OPERATOR'
+        );
     }
 
     /**
      * AdditiveExpression
      *   : PrimaryExpression
-     *   | AdditiveExpression ADDITIVE_OPERATOR PrimaryExpression -> AdditiveExpression ADDITIVE_OPERATOR AdditiveExpression ADDITIVE_OPERATOR PrimaryExpression
+     *   | AdditiveExpression ADDITIVE_OPERATOR PrimaryExpression
      *   ;
      */
     MultiplicativeExpression() {
-        let left = this.PrimaryExpression();
+        return this._BinaryExpression(
+            'PrimaryExpression',
+            'MULTIPLICATIVE_OPERATOR'
+        );
+    }
 
-        while (this._currentToken.type === 'MULTIPLICATIVE_OPERATOR') {
-            const operator = this._eat('MULTIPLICATIVE_OPERATOR').value;
-            const right = this.PrimaryExpression();
+    /**
+     * Generic binary expression.
+     */
+    _BinaryExpression(builderName, operatorToken) {
+        let left = this[builderName]();
+
+        while (this._currentToken.type === operatorToken) {
+            const operator = this._eat(operatorToken).value;
+            const right = this[builderName]();
             left = {
                 type: 'BinaryExpression',
                 operator,
