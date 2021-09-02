@@ -109,7 +109,7 @@ class Parser {
 
     /**
      * Expression
-     *   : Literal
+     *   : AdditiveExpression
      *   ;
      */
     Expression() {
@@ -165,10 +165,28 @@ class Parser {
     /**
      * PrimaryExpression
      *   : Literal
+     *   | ParenthesizedExpression
      *   ;
      */
     PrimaryExpression() {
-        return this.Literal();
+        switch (this._currentToken.type) {
+            case '(':
+                return this.ParenthesizedExpression();
+            default:
+                return this.Literal();
+        }
+    }
+
+    /**
+     * ParenthesizedExpression
+     *   : '(' Expression ')'
+     *   ;
+     */
+    ParenthesizedExpression() {
+        this._eat('(');
+        const expression = this.Expression();
+        this._eat(')');
+        return expression;
     }
 
     /**

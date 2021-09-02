@@ -14,7 +14,11 @@ const parser = new Parser();
  * For manual tests.
  */
 function exec() {
-    const program = `2 + 3 * 2;`;
+    const program = `
+
+    (2 + 3) * 2;
+    
+    `;
 
     const ast = parser.parse(program);
 
