@@ -48,6 +48,7 @@ class Parser {
      *   : ExpressionStatement
      *   | BlockStatement
      *   | EmptyStatement
+     *   | VariableStatement
      *   ;
      */
     Statement() {
@@ -56,9 +57,73 @@ class Parser {
                 return this.EmptyStatement();
             case '{':
                 return this.BlockStatement();
+            case 'let':
+                return this.VariableStatement();
             default:
                 return this.ExpressionStatement();
         }
+    }
+
+    /**
+     * VariableStatement
+     *   : 'let' VariableDeclarationList ';'
+     *   ;
+     */
+    VariableStatement() {
+        this._eat('let');
+        const declarations = this.VariableDeclarationList();
+        this._eat(';');
+        return {
+            type: 'VariableStatement',
+            declarations,
+        };
+    }
+
+    /**
+     *   VariableDeclarationList
+     *   : VariableDeclaration
+     *   | VariableDeclarationList ',' VariableDeclaration
+     *   ;
+     */
+    VariableDeclarationList() {
+        const declarations = [];
+
+        do {
+            declarations.push(this.VariableDeclaration());
+        } while (this._currentToken.type === ',' && this._eat(','));
+
+        return declarations;
+    }
+
+    /**
+     * VariableDeclaration
+     *   : Identifier OptVariableInitializer
+     *   ;
+     */
+    VariableDeclaration() {
+        const id = this.Identifier();
+
+        // The init would be null if there is a comma or colon after the Identifier
+        const init =
+            this._currentToken.type !== ',' && this._currentToken.type !== ';'
+                ? this.VariableInitializer()
+                : null;
+
+        return {
+            type: 'VariableDeclaration',
+            id,
+            init,
+        };
+    }
+
+    /**
+     * VariableInitializer
+     *   : SIMPLE_ASSIGN AssignmentExpression
+     *   ;
+     */
+    VariableInitializer() {
+        this._eat('SIMPLE_ASSIGN');
+        return this.AssignmentExpression();
     }
 
     /**
