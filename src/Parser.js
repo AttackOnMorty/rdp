@@ -213,12 +213,12 @@ class Parser {
 
     /**
      * AssignmentExpression
-     *   : RelationalExpression
-     *   | LeftHandSideExpression AssignmentOperator RelationalExpression
+     *   : EqualityExpression
+     *   | LeftHandSideExpression AssignmentOperator EqualityExpression
      *   ;
      */
     AssignmentExpression() {
-        const left = this.RelationalExpression();
+        const left = this.EqualityExpression();
 
         if (!this._isAssignmentOperator(this._currentToken.type)) {
             return left;
@@ -284,6 +284,24 @@ class Parser {
             return this._eat('SIMPLE_ASSIGN');
         }
         return this._eat('COMPLEX_ASSIGN');
+    }
+
+    /**
+     * EQUALITY_OPERATOR: ==, !=
+     *
+     *   x == y
+     *   x != y
+     *
+     * EqualityExpression
+     *   : RelationalExpression
+     *   | EqualityExpression EQUALITY_OPERATOR RelationalExpression
+     *   ;
+     */
+    EqualityExpression() {
+        return this._BinaryExpression(
+            'RelationalExpression',
+            'EQUALITY_OPERATOR'
+        );
     }
 
     /**
@@ -375,7 +393,13 @@ class Parser {
      * Whether the token is a literal.
      */
     _isLiteral(tokenType) {
-        return tokenType === 'NUMBER' || tokenType === 'STRING';
+        return (
+            tokenType === 'NUMBER' ||
+            tokenType === 'STRING' ||
+            tokenType === 'true' ||
+            tokenType === 'false' ||
+            tokenType === 'null'
+        );
     }
 
     /**
@@ -394,6 +418,8 @@ class Parser {
      * Literal
      *   : NumericLiteral
      *   | StringLiteral
+     *   | BooleanLiteral
+     *   | NullLiteral
      *   ;
      */
     Literal() {
@@ -402,6 +428,12 @@ class Parser {
                 return this.NumericLiteral();
             case 'STRING':
                 return this.StringLiteral();
+            case 'true':
+                return this.BooleanLiteral(true);
+            case 'false':
+                return this.BooleanLiteral(false);
+            case 'null':
+                return this.NullLiteral();
             default:
                 throw new SyntaxError('Literal: unexpected literal production');
         }
@@ -430,6 +462,33 @@ class Parser {
         return {
             type: 'StringLiteral',
             value: token.value.slice(1, -1),
+        };
+    }
+
+    /**
+     * BooleanLiteral
+     *   : 'true'
+     *   | 'false'
+     *   ;
+     */
+    BooleanLiteral(value) {
+        this._eat(value ? 'true' : 'false');
+        return {
+            type: 'BooleanLiteral',
+            value,
+        };
+    }
+
+    /**
+     * NullLiteral
+     *   : 'null'
+     *   ;
+     */
+    NullLiteral() {
+        this._eat('null');
+        return {
+            type: 'NullLiteral',
+            value: null,
         };
     }
 
