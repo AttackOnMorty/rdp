@@ -213,12 +213,12 @@ class Parser {
 
     /**
      * AssignmentExpression
-     *   : EqualityExpression
-     *   | LeftHandSideExpression AssignmentOperator EqualityExpression
+     *   : LogicalORExpression
+     *   | LeftHandSideExpression AssignmentOperator LogicalORExpression
      *   ;
      */
     AssignmentExpression() {
-        const left = this.EqualityExpression();
+        const left = this.LogicalORExpression();
 
         if (!this._isAssignmentOperator(this._currentToken.type)) {
             return left;
@@ -284,6 +284,51 @@ class Parser {
             return this._eat('SIMPLE_ASSIGN');
         }
         return this._eat('COMPLEX_ASSIGN');
+    }
+
+    /**
+     * Logical OR expression.
+     *
+     *   x || y
+     *
+     * LogicalORExpression
+     *   : LogicalANDExpression
+     *   | LogicalORExpression LOGICAL_OR LogicalANDExpression
+     *   ;
+     */
+    LogicalORExpression() {
+        return this._LogicalExpression('LogicalANDExpression', 'LOGICAL_OR');
+    }
+
+    /**
+     * Logical AND expression.
+     *
+     *   x && y
+     *
+     * LogicalANDExpression
+     *   : EqualityExpression
+     *   | LogicalANDExpression LOGICAL_AND EqualityExpression
+     *   ;
+     */
+    LogicalANDExpression() {
+        return this._LogicalExpression('EqualityExpression', 'LOGICAL_AND');
+    }
+
+    _LogicalExpression(builderName, operatorToken) {
+        let left = this[builderName]();
+
+        while (this._currentToken.type === operatorToken) {
+            const operator = this._eat(operatorToken).value;
+            const right = this[builderName]();
+            left = {
+                type: '_LogicalExpression',
+                operator,
+                left,
+                right,
+            };
+        }
+
+        return left;
     }
 
     /**

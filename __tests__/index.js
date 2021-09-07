@@ -21,7 +21,7 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    x >= 0 != false;
+    x > 0 && y < 1;
 
     `;
 

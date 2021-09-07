@@ -40,6 +40,11 @@ const Spec = [
     [/^\w+/, 'IDENTIFIER'],
 
     // -----------------------------------
+    // Logical operators: && ||
+    [/^&&/, 'LOGICAL_AND'],
+    [/^\|\|/, 'LOGICAL_OR'],
+
+    // -----------------------------------
     // Equality operators: ==, !=
     [/^[=!]=/, 'EQUALITY_OPERATOR'],
 
@@ -49,13 +54,13 @@ const Spec = [
     [/^[*/+-]=/, 'COMPLEX_ASSIGN'],
 
     // -----------------------------------
+    // Relational operators: >, >=, <, <=
+    [/^[><]=?/, 'RELATIONAL_OPERATOR'],
+
+    // -----------------------------------
     // Math operators: +, -, *, /:
     [/^[+-]/, 'ADDITIVE_OPERATOR'],
     [/^[*\/]/, 'MULTIPLICATIVE_OPERATOR'],
-
-    // -----------------------------------
-    // Relational operators: >, >=, <, <=
-    [/^[><]=?/, 'RELATIONAL_OPERATOR'],
 
     // -----------------------------------
     // Strings:
