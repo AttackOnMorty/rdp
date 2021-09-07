@@ -49,12 +49,15 @@ class Parser {
      *   | BlockStatement
      *   | EmptyStatement
      *   | VariableStatement
+     *   | IfStatement
      *   ;
      */
     Statement() {
         switch (this._currentToken.type) {
             case ';':
                 return this.EmptyStatement();
+            case 'if':
+                return this.IfStatement();
             case '{':
                 return this.BlockStatement();
             case 'let':
@@ -62,6 +65,33 @@ class Parser {
             default:
                 return this.ExpressionStatement();
         }
+    }
+
+    /**
+     * IfStatement
+     *   : 'if' '(' Expression ')' Statement
+     *   | 'if' '(' Expression ')' Statement 'else' Statement
+     *   ;
+     */
+    IfStatement() {
+        this._eat('if');
+        this._eat('(');
+        const test = this.Expression();
+        this._eat(')');
+
+        const consequent = this.Statement();
+        // If we only have 'if' statement, this._currentToken would be null
+        const alternate =
+            this._currentToken !== null && this._currentToken.type === 'else'
+                ? this._eat('else') && this.Statement()
+                : null;
+
+        return {
+            type: 'IfStatement',
+            test,
+            consequent,
+            alternate,
+        };
     }
 
     /**
