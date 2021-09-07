@@ -9,6 +9,7 @@ const tests = [
     require('./assignment-test'),
     require('./variable-test'),
     require('./if-test'),
+    require('./relational-test'),
 ];
 
 const parser = new Parser();
@@ -19,10 +20,11 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    if (x) {
+    if (x > 1) {
         x = 1;
+    } else {
+        x += 1;
     }
-  
 
     `;
 

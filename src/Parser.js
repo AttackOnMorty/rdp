@@ -213,12 +213,12 @@ class Parser {
 
     /**
      * AssignmentExpression
-     *   : AdditiveExpression
-     *   | LeftHandSideExpression AssignmentOperator AssignmentExpression
+     *   : RelationalExpression
+     *   | LeftHandSideExpression AssignmentOperator RelationalExpression
      *   ;
      */
     AssignmentExpression() {
-        const left = this.AdditiveExpression();
+        const left = this.RelationalExpression();
 
         if (!this._isAssignmentOperator(this._currentToken.type)) {
             return left;
@@ -287,6 +287,26 @@ class Parser {
     }
 
     /**
+     * RELATIONAL_OPERATOR: >, >=, <, <=
+     *
+     *   x > y
+     *   x >= y
+     *   x < y
+     *   x <= y
+     *
+     * RelationalExpression
+     *   : AdditiveExpression
+     *   | RelationalExpression RELATIONAL_OPERATOR AdditiveExpression
+     *   ;
+     */
+    RelationalExpression() {
+        return this._BinaryExpression(
+            'AdditiveExpression',
+            'RELATIONAL_OPERATOR'
+        );
+    }
+
+    /**
      * AdditiveExpression
      *   : MultiplicativeExpression
      *   | AdditiveExpression ADDITIVE_OPERATOR MultiplicativeExpression
@@ -300,9 +320,9 @@ class Parser {
     }
 
     /**
-     * AdditiveExpression
+     * MultiplicativeExpression
      *   : PrimaryExpression
-     *   | AdditiveExpression ADDITIVE_OPERATOR PrimaryExpression
+     *   | MultiplicativeExpression MULTIPLICATIVE_OPERATOR PrimaryExpression
      *   ;
      */
     MultiplicativeExpression() {
