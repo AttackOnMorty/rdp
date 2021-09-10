@@ -11,6 +11,7 @@ const tests = [
     require('./if-test'),
     require('./relational-test'),
     require('./equality-test'),
+    require('./unary-test'),
 ];
 
 const parser = new Parser();
@@ -21,13 +22,14 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    x > 0 && y < 1;
+    -x;
+    !x;
 
     `;
 
     const ast = parser.parse(program);
 
-    console.log(JSON.stringify(ast, null, 2));
+    console.log(JSON.stringify(ast, null, 4));
 }
 
 // Manual test:

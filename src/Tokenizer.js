@@ -1,3 +1,10 @@
+/**
+ *  Numbers > Identifiers
+ *  Equality(==) > Assignment(=)
+ *  Equality(!=) > Logical(!)
+ *  Assignment(+= -= *= /=) > Math(+ - * /)
+ */
+
 const Spec = [
     // -----------------------------------
     // Spaces:
@@ -40,13 +47,14 @@ const Spec = [
     [/^\w+/, 'IDENTIFIER'],
 
     // -----------------------------------
+    // Equality operators: ==, !=
+    [/^[=!]=/, 'EQUALITY_OPERATOR'],
+
+    // -----------------------------------
     // Logical operators: && ||
     [/^&&/, 'LOGICAL_AND'],
     [/^\|\|/, 'LOGICAL_OR'],
-
-    // -----------------------------------
-    // Equality operators: ==, !=
-    [/^[=!]=/, 'EQUALITY_OPERATOR'],
+    [/^!/, 'LOGICAL_NOT'],
 
     // -----------------------------------
     // Assignment operators: =, *=, /=, +=, -=
