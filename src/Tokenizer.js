@@ -38,6 +38,7 @@ const Spec = [
     [/^\bfalse\b/, 'false'],
     [/^\bnull\b/, 'null'],
     [/^\bwhile\b/, 'while'],
+    [/^\bdo\b/, 'do'],
 
     // -----------------------------------
     // Numbers:

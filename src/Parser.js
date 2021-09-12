@@ -64,6 +64,7 @@ class Parser {
             case 'let':
                 return this.VariableStatement();
             case 'while':
+            case 'do':
                 return this.IterationStatement();
             default:
                 return this.ExpressionStatement();
@@ -73,12 +74,15 @@ class Parser {
     /**
      * IterationStatement
      *   : WhileStatement
+     *   | DoWhileStatement
      *   ;
      */
     IterationStatement() {
         switch (this._currentToken.type) {
             case 'while':
                 return this.WhileStatement();
+            case 'do':
+                return this.DoWhileStatement();
         }
     }
 
@@ -98,6 +102,27 @@ class Parser {
             type: 'WhileStatement',
             test,
             body,
+        };
+    }
+
+    /**
+     * DoWhileStatement
+     *   : 'do' BlockStatement 'while' '(' Expression ')' ';'
+     *   ;
+     */
+    DoWhileStatement() {
+        this._eat('do');
+        const body = this.BlockStatement();
+        this._eat('while');
+        this._eat('(');
+        const test = this.Expression();
+        this._eat(')');
+        this._eat(';');
+
+        return {
+            type: 'DoWhileStatement',
+            body,
+            test,
         };
     }
 

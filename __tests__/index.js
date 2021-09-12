@@ -13,6 +13,7 @@ const tests = [
     require('./equality-test'),
     require('./unary-test'),
     require('./while-test'),
+    require('./do-while-test'),
 ];
 
 const parser = new Parser();
@@ -22,10 +23,10 @@ const parser = new Parser();
  */
 function exec() {
     const program = `
-    
-    while (x > 10) {
+
+    do {
         x -= 1;
-      }
+    } while (x > 10);
 
     `;
 
