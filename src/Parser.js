@@ -50,6 +50,7 @@ class Parser {
      *   | EmptyStatement
      *   | VariableStatement
      *   | IfStatement
+     *   | IterationStatement
      *   ;
      */
     Statement() {
@@ -62,9 +63,42 @@ class Parser {
                 return this.BlockStatement();
             case 'let':
                 return this.VariableStatement();
+            case 'while':
+                return this.IterationStatement();
             default:
                 return this.ExpressionStatement();
         }
+    }
+
+    /**
+     * IterationStatement
+     *   : WhileStatement
+     *   ;
+     */
+    IterationStatement() {
+        switch (this._currentToken.type) {
+            case 'while':
+                return this.WhileStatement();
+        }
+    }
+
+    /**
+     * WhileStatement
+     *   : 'while' '(' Expression ')' Statement
+     *   ;
+     */
+    WhileStatement() {
+        this._eat('while');
+        this._eat('(');
+        const test = this.Expression();
+        this._eat(')');
+        const body = this.Statement();
+
+        return {
+            type: 'WhileStatement',
+            test,
+            body,
+        };
     }
 
     /**
