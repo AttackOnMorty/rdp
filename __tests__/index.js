@@ -14,6 +14,7 @@ const tests = [
     require('./unary-test'),
     require('./while-test'),
     require('./do-while-test'),
+    require('./for-test'),
 ];
 
 const parser = new Parser();
@@ -24,9 +25,9 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    do {
-        x -= 1;
-    } while (x > 10);
+    for (let i = 0; i < 10; i += 1) {
+        x += i;
+    }
 
     `;
 

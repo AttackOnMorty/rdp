@@ -65,6 +65,7 @@ class Parser {
                 return this.VariableStatement();
             case 'while':
             case 'do':
+            case 'for':
                 return this.IterationStatement();
             default:
                 return this.ExpressionStatement();
@@ -75,6 +76,7 @@ class Parser {
      * IterationStatement
      *   : WhileStatement
      *   | DoWhileStatement
+     *   | ForStatement
      *   ;
      */
     IterationStatement() {
@@ -83,6 +85,8 @@ class Parser {
                 return this.WhileStatement();
             case 'do':
                 return this.DoWhileStatement();
+            case 'for':
+                return this.ForStatement();
         }
     }
 
@@ -127,6 +131,50 @@ class Parser {
     }
 
     /**
+     * ForStatement
+     *   : 'for' '(' OptForStatementInit ';' OptExpression ';' OptExpression ')' Statement
+     *   ;
+     */
+    ForStatement() {
+        this._eat('for');
+        this._eat('(');
+
+        const init =
+            this._currentToken.type !== ';' ? this.ForStatementInit() : null;
+        this._eat(';');
+
+        const test = this._currentToken.type !== ';' ? this.Expression() : null;
+        this._eat(';');
+
+        const update =
+            this._currentToken.type !== ')' ? this.Expression() : null;
+        this._eat(')');
+
+        const body = this.Statement();
+
+        return {
+            type: 'ForStatement',
+            init,
+            test,
+            update,
+            body,
+        };
+    }
+
+    /**
+     * ForStatementInit
+     *   : VariableStatementInit
+     *   | Expression
+     *   ;
+     */
+    ForStatementInit() {
+        if (this._currentToken.type === 'let') {
+            return this.VariableStatementInit();
+        }
+        return this.Expression();
+    }
+
+    /**
      * IfStatement
      *   : 'if' '(' Expression ')' Statement
      *   | 'if' '(' Expression ')' Statement 'else' Statement
@@ -154,18 +202,28 @@ class Parser {
     }
 
     /**
-     * VariableStatement
-     *   : 'let' VariableDeclarationList ';'
+     * VariableStatementInit
+     *   : 'let' VariableDeclarationList
      *   ;
      */
-    VariableStatement() {
+    VariableStatementInit() {
         this._eat('let');
         const declarations = this.VariableDeclarationList();
-        this._eat(';');
         return {
             type: 'VariableStatement',
             declarations,
         };
+    }
+
+    /**
+     * VariableStatement
+     *   : VariableStatementInit ';'
+     *   ;
+     */
+    VariableStatement() {
+        const variableStatement = this.VariableStatementInit();
+        this._eat(';');
+        return variableStatement;
     }
 
     /**
