@@ -15,6 +15,7 @@ const tests = [
     require('./while-test'),
     require('./do-while-test'),
     require('./for-test'),
+    require('./function-declaration-test'),
 ];
 
 const parser = new Parser();
@@ -25,8 +26,8 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    for (let i = 0; i < 10; i += 1) {
-        x += i;
+    def empty() {
+        return;
     }
 
     `;

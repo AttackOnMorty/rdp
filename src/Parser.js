@@ -51,6 +51,8 @@ class Parser {
      *   | VariableStatement
      *   | IfStatement
      *   | IterationStatement
+     *   | FunctionDeclaration
+     *   | ReturnStatement
      *   ;
      */
     Statement() {
@@ -63,6 +65,10 @@ class Parser {
                 return this.BlockStatement();
             case 'let':
                 return this.VariableStatement();
+            case 'def':
+                return this.FunctionDeclaration();
+            case 'return':
+                return this.ReturnStatement();
             case 'while':
             case 'do':
             case 'for':
@@ -70,6 +76,58 @@ class Parser {
             default:
                 return this.ExpressionStatement();
         }
+    }
+
+    /**
+     * ReturnStatement
+     *   : 'return' OptExpression ';'
+     */
+    ReturnStatement() {
+        this._eat('return');
+        const argument =
+            this._currentToken.type !== ';' ? this.Expression() : null;
+        this._eat(';');
+
+        return {
+            type: 'ReturnStatement',
+            argument,
+        };
+    }
+
+    /**
+     * FunctionDeclaration
+     *   : 'def' Identifier '(' OptFormalParameterList ')' BlockStatement
+     *   ;
+     */
+    FunctionDeclaration() {
+        this._eat('def');
+        const name = this.Identifier();
+        this._eat('(');
+        const params =
+            this._currentToken.type !== ')' ? this.FormalParameterList() : [];
+        this._eat(')');
+        const body = this.BlockStatement();
+
+        return {
+            type: 'FunctionDeclaration',
+            name,
+            params,
+            body,
+        };
+    }
+
+    /**
+     * FormalParameterList
+     *   : Identifier
+     *   | FormalParameterList ',' Identifier
+     *   ;
+     */
+    FormalParameterList() {
+        const result = [];
+        do {
+            result.push(this.Identifier());
+        } while (this._currentToken.type === ',' && this._eat(','));
+        return result;
     }
 
     /**
