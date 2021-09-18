@@ -16,6 +16,7 @@ const tests = [
     require('./do-while-test'),
     require('./for-test'),
     require('./function-declaration-test'),
+    require('./member-test'),
 ];
 
 const parser = new Parser();
@@ -26,9 +27,7 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    def empty() {
-        return;
-    }
+    x.y;
 
     `;
 
