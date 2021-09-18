@@ -17,6 +17,7 @@ const tests = [
     require('./for-test'),
     require('./function-declaration-test'),
     require('./member-test'),
+    require('./call-test'),
 ];
 
 const parser = new Parser();
@@ -27,7 +28,7 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    x.y;
+    console.log(x, y);
 
     `;
 

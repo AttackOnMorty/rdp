@@ -611,11 +611,78 @@ class Parser {
 
     /**
      * LeftHandSideExpression
-     *   : MemberExpression
+     *   : CallMemberExpression
      *   ;
      */
     LeftHandSideExpression() {
-        return this.MemberExpression();
+        return this.CallMemberExpression();
+    }
+
+    /**
+     * CallMemberExpression
+     *   : MemberExpression
+     *   | CallExpression
+     *   ;
+     */
+    CallMemberExpression() {
+        const member = this.MemberExpression();
+
+        if (this._currentToken.type === '(') {
+            return this._CallExpression(member);
+        }
+
+        return member;
+    }
+
+    /**
+     * CallExpression
+     *   : Callee Arguments
+     *   ;
+     *
+     * Callee
+     *   : MemberExpression
+     *   | CallExpression
+     *   ;
+     */
+    _CallExpression(callee) {
+        let callExpression = {
+            type: 'CallExpression',
+            callee,
+            arguments: this.Arguments(),
+        };
+
+        if (this._currentToken.type === '(') {
+            callExpression = this._CallExpression(callExpression);
+        }
+
+        return callExpression;
+    }
+
+    /**
+     * Arguments
+     *   : '(' OptArgumentList ')'
+     *   ;
+     */
+    Arguments() {
+        this._eat('(');
+        const argumentList =
+            this._currentToken.type !== ')' ? this.ArgumentList() : [];
+        this._eat(')');
+        return argumentList;
+    }
+
+    /**
+     * ArgumentList
+     *   : AssignmentExpression
+     *   | ArgumentList ',' AssignmentExpression
+     *   ;
+     */
+    ArgumentList() {
+        const argumentList = [];
+        do {
+            argumentList.push(this.AssignmentExpression());
+        } while (this._currentToken.type === ',' && this._eat(','));
+        return argumentList;
     }
 
     /**
