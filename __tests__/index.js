@@ -18,6 +18,7 @@ const tests = [
     require('./function-declaration-test'),
     require('./member-test'),
     require('./call-test'),
+    require('./class-test'),
 ];
 
 const parser = new Parser();
@@ -28,7 +29,16 @@ const parser = new Parser();
 function exec() {
     const program = `
 
-    console.log(x, y);
+    class Point {
+      def constructor(x, y) {
+        this.x = x;
+        this.y = y;
+      }
+
+      def calc() {
+        return this.x + this.y;
+      }
+    }
 
     `;
 
