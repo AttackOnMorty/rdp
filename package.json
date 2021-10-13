@@ -1,22 +1,22 @@
 {
-  "name": "toy-rdp",
+  "name": "rdp",
   "version": "1.0.0",
-  "description": "This is a toy Recursive Descent Parser.",
+  "description": "This is a Recursive Descent Parser.",
   "main": "index.js",
   "scripts": {
-    "test": "node __tests__/index.js"
+    "test": "node --trace-uncaught __tests__/index.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AttackOnMorty/toy-rdp.git"
+    "url": "git+https://github.com/AttackOnMorty/rdp.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/AttackOnMorty/toy-rdp/issues"
+    "url": "https://github.com/AttackOnMorty/rdp/issues"
   },
-  "homepage": "https://github.com/AttackOnMorty/toy-rdp#readme",
+  "homepage": "https://github.com/AttackOnMorty/rdp#readme",
   "dependencies": {
     "assert": "^2.0.0"
   }
